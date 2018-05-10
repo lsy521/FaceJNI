@@ -8,6 +8,8 @@ import java.math.BigDecimal;
 public class FaceFunction {
 
     private static final String SPLIT = ":";
+    private static final int SWIDTH = 80;
+    private static final int SHEIGHT= 80;
 
     public static byte[] getPictureBytes(String picPath) {
         File imageFile;
@@ -111,83 +113,8 @@ public class FaceFunction {
                 }
                 successOrfailue = NativeFunction.feature_extract(faceAttribute, rgbArray, width, height);
                 if (successOrfailue == 0) {
-                    return faceAttribute;
-                } else {
-                    return new FaceAttribute();
-                }
-            } else {
-                throw new FileNotFoundException(imageFile.getName() + " is not exists");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (null != bais) {
-                try {
-                    bais.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (null != baos) {
-                try {
-                    baos.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (null != fis) {
-                try {
-                    fis.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return new FaceAttribute();
-    }
-
-    /**
-     * 特征提取方法 （内）（赵喆）
-     *
-     * @param imagePath 传入图片的绝对路径
-     * @param sWidth    清晰度评价对应的宽
-     * @param sHeight   清晰度评价对应的高
-     * @return 返回float[]形式的特征值
-     */
-    public static FaceAttribute featureExtract(String imagePath, int sWidth, int sHeight) {
-        File imageFile;
-        ByteArrayInputStream bais = null;
-        ByteArrayOutputStream baos = null;
-        FileInputStream fis = null;
-        byte[] buffer = new byte[1024];
-        try {
-            imageFile = new File(imagePath);
-            baos = new ByteArrayOutputStream();
-            fis = new FileInputStream(imageFile);
-            int len;
-            while ((len = fis.read(buffer)) > -1) {
-                baos.write(buffer, 0, len);
-            }
-            bais = new ByteArrayInputStream(baos.toByteArray());
-            BufferedImage image = ImageIO.read(bais);
-            if (image != null) {
-                FaceAttribute faceAttribute = new FaceAttribute();
-                int successOrfailue;
-                int height = image.getHeight();
-                int width = image.getWidth();
-                int[] rgbArray = new int[height * width * 3];
-                for (int h = 0; h < height; h++) {
-                    for (int w = 0; w < width; w++) {
-                        int pixel = image.getRGB(w, h);// 下面三行代码将一个数字转换为RGB数字
-                        rgbArray[h * width * 3 + w * 3] = (pixel & 0xff0000) >> 16;
-                        rgbArray[h * width * 3 + w * 3 + 1] = (pixel & 0xff00) >> 8;
-                        rgbArray[h * width * 3 + w * 3 + 2] = (pixel & 0xff);
-                    }
-                }
-                successOrfailue = NativeFunction.feature_extract(faceAttribute, rgbArray, width, height);
-                if (successOrfailue == 0) {
                     if (width > 0 && height > 0) {
-                        if (width >= sWidth && height > sHeight) {
+                        if (width >= SWIDTH && height > SHEIGHT) {
                             faceAttribute.setSharpness(0);
                         } else {
                             faceAttribute.setSharpness(1);
