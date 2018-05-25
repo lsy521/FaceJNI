@@ -1,6 +1,8 @@
 package com.hzgc.jni;
 
-public class PictureData {
+import java.io.Serializable;
+
+public class PictureData implements Serializable {
     //图片ID
     private String imageID;
 
